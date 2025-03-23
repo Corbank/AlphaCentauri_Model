@@ -21,7 +21,6 @@
             width: 800px;
             height: 800px;
             transform-style: preserve-3d;
-            transition: transform 0.3s;
         }
 
         .star, .planet {
@@ -56,37 +55,6 @@
             background: #8b5a2b;
             box-shadow: 0 0 5px rgba(139, 90, 43, 0.8);
         }
-
-        .info-bubble {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.3s;
-        }
-
-        .info-bubble.expanded {
-            padding: 10px;
-            width: 200px;
-        }
-
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -94,87 +62,29 @@
         <div class="star" id="alphaCentauri"></div>
         <div class="planet-orbit" id="orbit">
             <div class="planet" id="alphaCentauriB"></div>
-            <div class="info-bubble" id="info">?</div>
         </div>
-    </div>
-    <div class="controls">
-        <button id="playPause">Play</button>
     </div>
 
     <script>
-        const scene = document.getElementById('scene');
-        const star = document.getElementById('alphaCentauri');
         const orbit = document.getElementById('orbit');
-        const planet = document.getElementById('alphaCentauriB');
-        const info = document.getElementById('info');
-        const playPause = document.getElementById('playPause');
+        let angle = 0;
+        let isPlaying = true;
 
-        let starRotation = 0;
-        let planetRotation = 0;
-        let zoom = 1;
-        let isPlaying = false;
-        let isDragging = false;
-        let previousX, previousY;
+        function animate() {
+            if (isPlaying) {
+                angle += 0.01;
+                orbit.style.transform = `translate(-50%, -50%) rotateY(${angle}rad)`;
+            }
+            requestAnimationFrame(animate);
+        }
 
-        // Planet info
-        const planetInfo = {
-            name: "Alpha Centauri Bb",
-            size: "≈ 1.1 Earth radii",
-            density: "Unknown (estimated similar to Earth)",
-            orbitalPeriod: "3.2357 days"
-        };
+        animate();
 
-        // Initial planet position
-        planet.style.transform = `translateX(150px)`;
-
-        // Info bubble click handler
-        info.addEventListener('click', () => {
-            if (!info.classList.contains('expanded')) {
-                info.innerHTML = `
-                    <strong>${planetInfo.name}</strong><br>
-                    Size: ${planetInfo.size}<br>
-                    Density: ${planetInfo.density}<br>
-                    Orbital Period: ${planetInfo.orbitalPeriod}
-                `;
-                info.classList.add('expanded');
-            } else {
-                info.textContent = '?';
-                info.classList.remove('expanded');
+        document.addEventListener('keypress', (e) => {
+            if (e.key === ' ') {
+                isPlaying = !isPlaying;
             }
         });
-
-        // Play/Pause toggle
-        playPause.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            playPause.textContent = isPlaying ? 'Pause' : 'Play';
-        });
-
-        // Mouse controls
-        scene.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            previousX = e.clientX;
-            previousY = e.clientY;
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                const deltaX = e.clientX - previousX;
-                const deltaY = e.clientY - previousY;
-
-                if (e.shiftKey) { // Shift key rotates planet independently
-                    planetRotation += deltaX * 0.5;
-                } else { // Normal drag rotates star
-                    starRotation += deltaX * 0.5;
-                }
-
-                previousX = e.clientX;
-                previousY = e.clientY;
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
-
-        // Zoom with mouse wheel
-        document.addEventListener('wheel', (e) ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
+    </script>
+</body>
+</html>
